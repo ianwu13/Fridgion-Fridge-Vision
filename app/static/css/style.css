@@ -682,7 +682,6 @@ PAGE BANNER
 	transition: opacity 0.15s linear;
 	opacity: 0;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-	background-color: #353a40;
 }
 
 .fixed-top {

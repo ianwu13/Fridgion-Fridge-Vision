@@ -10,7 +10,7 @@ from model import yolo
 
 # setup the webserver
 # port may need to be changed if there are multiple flask servers running on same server
-port = 12347
+port = 12349
 base_url = get_base_url(port)
 
 # if the base url is not empty, then the server is running in development, and we need to specify the static folder so that the static files are served
@@ -25,17 +25,6 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
 
-'''
-# TODO: Load custom model
-cfg = 'model/yolov5s.yaml'
-weights_path = 'model/weights/yolov5s_best.pt'
-try:
-    device = torch.device('cuda')
-except:
-    device = torch.device('cpu')
-model = yolo.yolo_v5(cfg)
-model.load_state_dict(torch.load(weights_path, map_location=device))
-'''
 model = torch.hub.load("ultralytics/yolov5", "custom", path = 'best.pt', force_reload=True)
 
 def allowed_file(filename):
