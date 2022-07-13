@@ -6,7 +6,7 @@ from url_utils import get_base_url
 import os
 import torch
 
-from model import yolo
+#from model import yolo
 
 # setup the webserver
 # port may need to be changed if there are multiple flask servers running on same server
@@ -52,14 +52,14 @@ def home():
             return redirect(url_for('uploaded_file',
                                     filename=filename))
 
-    return render_template('home.html')
+    return render_template('index.html')
 
 
 @app.route(f'{base_url}/uploads/<filename>')
 def uploaded_file(filename):
     here = os.getcwd()
     image_path = os.path.join(here, app.config['UPLOAD_FOLDER'], filename)
-    results = model(image_path, size=416)
+    results = model(image_path, size=720)
     if len(results.pandas().xyxy) > 0:
         results.print()
         save_dir = os.path.join(here, app.config['UPLOAD_FOLDER'])
@@ -88,10 +88,15 @@ def uploaded_file(filename):
         format_confidences = and_syntax(format_confidences)
 
         labels = list(results.pandas().xyxy[0]['name'])
+        
+        link_str = "&IngIncl=".join([food.replace(" ", "+") for food in labels[:2]])
         # labels: sorting and capitalizing, putting into function
         labels = set(labels)
         labels = [emotion.capitalize() for emotion in labels]
         labels = and_syntax(labels)
+      
+        recipe_link = "https://www.allrecipes.com/search/results/?search=&IngIncl=" + link_str
+        print(recipe_link)
         return render_template('results.html', confidences=format_confidences, labels=labels,
                                old_filename=filename,
                                filename=filename)
@@ -112,7 +117,7 @@ def files(filename):
 
 if __name__ == '__main__':
     # IMPORTANT: change url to the site where you are editing this file.
-    website_url = 'localhost'
+    website_url = 'cocalc4.ai-camp.dev'
     
     print(f'Try to open\n\n    https://{website_url}' + base_url + '\n\n')
     app.run(host = '0.0.0.0', port=port, debug=True)
